@@ -1,5 +1,5 @@
 import store from '../store'; 
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from 'vue-router'
 import InvestmentPage from "../components/InvestmentPage.vue";  // Fix: use relative path
 import Signup from "../components/Signup.vue";                    // Fix: use relative path
 import Terms from '@/components/Terms.vue';
@@ -72,7 +72,7 @@ const routes = [
 
 // Create the router instance
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });
 

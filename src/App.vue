@@ -3,7 +3,7 @@
   <div class="app">
     <header>
     <div class="logo-container">
-    <img src="@/assets/logo.png" alt="QuickStock9ja Logo" class="logo" /><h1 class="quick">QuickStock9ja</h1></div>
+    <img src="@/assets/logo.png" alt="QuickStock9ja Logo" class="logo" /><h1 class="quick">Tr8game9ja</h1></div>
        
       
       
