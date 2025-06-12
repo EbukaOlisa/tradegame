@@ -1,8 +1,14 @@
 <template>
   <div>
   <div class="top-bar">
-  <button class="mode" @click="changeMode">Mode</button>
-      <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
+    <div class="mode-dropdown-container">
+  <button class="mode" @click="toggleDropdown">Mode</button>
+  <div v-if="showDropdown" class="dropdown-menu">
+    <button @click="selectMode('real')">Real Trade</button>
+    <button @click="selectMode('demo')">Demo Trade</button>
+  </div>
+</div>
+    <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
       
     </div>
   <div class="base-data">
@@ -43,12 +49,24 @@ export default {
   data() {
     return {
       referralLink: "", // New state to hold referral link
+       showDropdown: false,
+    selectedMode: "",
     };
   },
   computed: {
     ...mapState(["userName", "userId", "balance"]), // Map Vuex state to the profile page
   },
   methods: {
+     toggleDropdown() {
+    this.showDropdown = !this.showDropdown;
+  },
+  selectMode(mode) {
+    this.selectedMode = mode;
+    this.showDropdown = false;
+    const toast = useToast();
+    toast.success(`${mode === 'real' ? 'Real Trade' : 'Demo Trade'} selected`);
+    // You can add more logic here if needed (e.g. save to localStorage or switch behavior)
+  },
     async fetchBalance() {
       try {
         const response = await axios.get(
@@ -267,5 +285,38 @@ p {
 .button:active {
   transform: scale(0.97);
 }
+.mode-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 100;
+  width: 140px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  background: white;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+  background-color: #f2f2f2;
+}
+
 
 </style>
