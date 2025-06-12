@@ -2,6 +2,7 @@
   <div>
   <div class="top-bar">
       <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
+      <button class="mode" @click="changeMode">Mode</button>
     </div>
   <div class="base-data">
   <div v-if="referralLink" class="referral-container">
@@ -127,6 +128,9 @@ navigateToReceipt() {
 .get-referral:hover {
   background-color: darkred;
 }
+.mode:hover {
+  background-color: darkred;
+}
 
 /* Referral Container */
 .referral-container {
@@ -134,6 +138,18 @@ navigateToReceipt() {
   text-align: center;
 }
 .get-referral {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px; /* smaller padding */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px; /* smaller text */
+  width: auto; /* make width fit the content */
+  min-width: 120px; /* optional: minimum width */
+}
+.mode {
   background-color: red;
   color: white;
   font-weight: bold;
