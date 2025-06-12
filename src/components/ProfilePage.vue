@@ -1,34 +1,36 @@
 <template>
   <div>
-  <div class="top-bar">
-    <div class="mode-dropdown-container">
-  <button class="mode" @click="toggleDropdown">Mode</button>
-  <div v-if="showDropdown" class="dropdown-menu">
-    <button @click="selectMode('real')">Real Trade</button>
-    <button @click="selectMode('demo')">Demo Trade</button>
-  </div>
-</div>
-    <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
-      
+    <div class="top-bar">
+      <!-- Left-aligned change mode section -->
+      <div class="left-bar">
+        <button class="get-referral" @click="toggleModeDropdown">Change Mode</button>
+        <span v-if="selectedMode" class="selected-mode">{{ selectedMode }}</span>
+        <ul v-if="showModeDropdown" class="mode-dropdown">
+          <li @click="selectMode('Real')">Real</li>
+          <li @click="selectMode('Demo')">Demo</li>
+        </ul>
+      </div>
+
+      <!-- Right-aligned get referral code -->
+      <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
     </div>
-  <div class="base-data">
-  <div v-if="referralLink" class="referral-container">
-      <p><strong>Referral Link:</strong> {{ referralLink }}</p>
-      <button class="copy-btn" @click="copyReferral">Copy</button>
+
+    <div class="base-data">
+      <div v-if="referralLink" class="referral-container">
+        <p><strong>Referral Link:</strong> {{ referralLink }}</p>
+        <button class="copy-btn" @click="copyReferral">Copy</button>
+      </div>
+      <h1>Welcome, {{ userName }}</h1>
+      <p><strong class="highlight-text">User ID:</strong> <span class="bold-yellow">{{ userId }}</span></p>
+      <p><strong class="highlight-text">Balance:</strong> <span class="bold-yellow">{{ balance }}</span></p>
     </div>
-  <h1>Welcome, {{ userName }}</h1>
-  <p><strong class="highlight-text">User ID:</strong> <span class="bold-yellow">{{ userId }}</span></p>
-  <p><strong class="highlight-text">Balance:</strong> <span class="bold-yellow">{{ balance }}</span></p>
-</div>
 
     <div class="button-container">
-    <p>
-      <button class="button deposit" @click="navigateToDeposit">Deposit</button>
-      <button class="button Receipt" @click="navigateToReceipt">Receipt</button>
-      <button class="button investment-details" @click="navigateToInvestmentDetails">
-        History
-      </button>
-      <button class="button withdraw" @click="navigateToWithdrawal">Withdraw</button>
+      <p>
+        <button class="button deposit" @click="navigateToDeposit">Deposit</button>
+        <button class="button Receipt" @click="navigateToReceipt">Receipt</button>
+        <button class="button investment-details" @click="navigateToInvestmentDetails">History</button>
+        <button class="button withdraw" @click="navigateToWithdrawal">Withdraw</button>
       </p>
     </div>
 
@@ -37,73 +39,77 @@
 </template>
 
 
+
 <script>
 import { mapState } from "vuex";
 import InvestmentPage from "./InvestmentPage.vue";
 import axios from "axios";
-import { useToast } from 'vue-toastification'; 
+import { useToast } from 'vue-toastification';
+
 export default {
   components: {
     InvestmentPage,
   },
   data() {
     return {
-      referralLink: "", // New state to hold referral link
-       showDropdown: false,
-    selectedMode: "",
+      referralLink: "",           // Holds referral link
+      showModeDropdown: false,   // Toggles dropdown visibility
+      selectedMode: "",          // Holds the selected mode (Real/Demo)
     };
   },
   computed: {
-    ...mapState(["userName", "userId", "balance"]), // Map Vuex state to the profile page
+    ...mapState(["userName", "userId", "balance"]),
   },
   methods: {
-     toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
-  },
-  selectMode(mode) {
-    this.selectedMode = mode;
-    this.showDropdown = false;
-    const toast = useToast();
-    toast.success(`${mode === 'real' ? 'Real Trade' : 'Demo Trade'} selected`);
-    // You can add more logic here if needed (e.g. save to localStorage or switch behavior)
-  },
+    toggleModeDropdown() {
+      this.showModeDropdown = !this.showModeDropdown;
+    },
+
+    selectMode(mode) {
+      this.selectedMode = mode;
+      this.showModeDropdown = false;
+    },
+
     async fetchBalance() {
       try {
         const response = await axios.get(
-  `${import.meta.env.VITE_APP_BASE_URL}/api/users/${this.userId}/balance`,
-  {
-    headers: {
-      Authorization: `Bearer ${this.$store.getters.token}`,
-    },
-  }
-);
+          `${import.meta.env.VITE_APP_BASE_URL}/api/users/${this.userId}/balance`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters.token}`,
+            },
+          }
+        );
 
         const updatedBalance = response.data.balance;
-        this.$store.commit("updateBalance", updatedBalance); // Update Vuex store
+        this.$store.commit("updateBalance", updatedBalance);
       } catch (error) {
         console.error("Failed to fetch balance:", error);
       }
     },
+
     navigateToDeposit() {
       this.$router.push(`/deposit/${this.userId}`);
-      this.fetchBalance(); // Fetch the updated balance after navigating
+      this.fetchBalance();
     },
-navigateToReceipt() {
+
+    navigateToReceipt() {
       this.$router.push(`/receipt/${this.userId}`);
-      
     },
 
     navigateToWithdrawal() {
       this.$router.push(`/withdrawal/${this.userId}`);
-      this.fetchBalance(); // Fetch the updated balance after navigating
+      this.fetchBalance();
     },
+
     navigateToInvestmentDetails() {
       this.$router.push(`/investment-details/${this.userId}`);
     },
+
     async getReferralCode() {
       try {
-        const response = await axios.post(`${import.meta.env.VITE_APP_BASE_URL}/api/investments/generate-referral`,
-          
+        const response = await axios.post(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/generate-referral`,
           { userId: this.userId },
           {
             headers: {
@@ -116,6 +122,7 @@ navigateToReceipt() {
         console.error("Failed to generate referral code:", error);
       }
     },
+
     copyReferral() {
       if (this.referralLink) {
         navigator.clipboard.writeText(this.referralLink)
@@ -127,29 +134,21 @@ navigateToReceipt() {
             console.error('Failed to copy:', err);
           });
       }
-    }
+    },
   },
   created() {
-    this.fetchBalance(); // Fetch balance when the page is loaded
+    this.fetchBalance();
   },
 };
 </script>
 
 
+
 <style>
 /* Top bar for Get Referral Code button */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
 
 
 .get-referral:hover {
-  background-color: darkred;
-}
-.mode:hover {
   background-color: darkred;
 }
 
@@ -159,18 +158,6 @@ navigateToReceipt() {
   text-align: center;
 }
 .get-referral {
-  background-color: red;
-  color: white;
-  font-weight: bold;
-  padding: 5px 10px; /* smaller padding */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px; /* smaller text */
-  width: auto; /* make width fit the content */
-  min-width: 120px; /* optional: minimum width */
-}
-.mode {
   background-color: red;
   color: white;
   font-weight: bold;
@@ -285,37 +272,46 @@ p {
 .button:active {
   transform: scale(0.97);
 }
-.mode-dropdown-container {
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
   position: relative;
-  display: inline-block;
 }
 
-.dropdown-menu {
+.left-bar {
+  position: relative;
+}
+
+.mode-dropdown {
   position: absolute;
-  top: 100%;
+  top: 35px;
   left: 0;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  z-index: 100;
-  width: 140px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0;
+  z-index: 1000;
+  width: 100px;
+  text-align: left;
 }
 
-.dropdown-menu button {
-  display: block;
-  width: 100%;
-  padding: 8px 10px;
-  background: white;
-  border: none;
-  text-align: left;
-  font-size: 14px;
-  font-weight: bold;
+.mode-dropdown li {
+  padding: 8px 12px;
   cursor: pointer;
 }
 
-.dropdown-menu button:hover {
-  background-color: #f2f2f2;
+.mode-dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+.selected-mode {
+  margin-left: 10px;
+  font-weight: bold;
+  color: yellow;
 }
 
 
