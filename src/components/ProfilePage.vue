@@ -1,8 +1,9 @@
 <template>
   <div>
   <div class="top-bar">
+  <button class="mode" @click="changeMode">Mode</button>
       <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
-      <button class="mode" @click="changeMode">Mode</button>
+      
     </div>
   <div class="base-data">
   <div v-if="referralLink" class="referral-container">
@@ -121,9 +122,11 @@ navigateToReceipt() {
 /* Top bar for Get Referral Code button */
 .top-bar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
 }
+
 
 .get-referral:hover {
   background-color: darkred;
