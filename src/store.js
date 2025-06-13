@@ -11,6 +11,7 @@ const store = createStore({
     memberId: localStorage.getItem("memberId") || null,
     userId: localStorage.getItem("userId") || null,
     balance: parseFloat(localStorage.getItem("balance")) || 0,
+    demoBalance: parseFloat(localStorage.getItem("demoBalance")) || 0,
     shareBalance: parseFloat(localStorage.getItem("shareBalance")) || 0,
     contributedShare: parseFloat(localStorage.getItem("contributedShare")) || 0,
     sharePercentage: parseFloat(localStorage.getItem("sharePercentage")) || 0,
@@ -24,6 +25,7 @@ const store = createStore({
       state.userName = userData.name;
       state.userId = userData.userId;
       state.balance = userData.balance;
+      state.demoBalance = userData.demoBalance;
       state.token = userData.token;
 
       localStorage.setItem("token", userData.token);
@@ -52,6 +54,10 @@ const store = createStore({
       state.shareBalance = newShareBalance;
       localStorage.setItem("shareBalance", newShareBalance);
     },
+    updateDemoBalance(state, newDemoBalance) {
+  state.demoBalance = newDemoBalance;
+  localStorage.setItem("demoBalance", newDemoBalance);
+},
 
     updateContributedShare(state, newContributedShare) {
       state.contributedShare = newContributedShare;
@@ -76,6 +82,8 @@ const store = createStore({
       state.userId = null;
       state.memberId = null;
       state.balance = 0;
+      state.demoBalance = 0;
+
       state.shareBalance = 0;
       state.contributedShare = 0;
       state.sharePercentage = 0;
@@ -90,6 +98,7 @@ const store = createStore({
       localStorage.removeItem("balance");
       localStorage.removeItem("sharePercentage");
       localStorage.removeItem("contributedShare");
+      localStorage.removeItem("demoBalance");
 
       if (state.socket) {
         state.socket.disconnect();
@@ -195,6 +204,7 @@ const store = createStore({
     memberName: (state) => state.memberName,
     memberId: (state) => state.memberId,
     balance: (state) => state.balance,
+    demoBalance: (state) => state.demoBalance,
     shareBalance: (state) => state.shareBalance,
     contributedShare: (state) => state.contributedShare,
     sharePercentage: (state) => state.sharePercentage,

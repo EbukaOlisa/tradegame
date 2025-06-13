@@ -44,7 +44,7 @@
 import { mapState } from "vuex";
 import InvestmentPage from "./InvestmentPage.vue";
 import axios from "axios";
-import { useToast } from 'vue-toastification';
+import { useToast } from "vue-toastification";
 
 export default {
   components: {
@@ -52,9 +52,9 @@ export default {
   },
   data() {
     return {
-      referralLink: "",           // Holds referral link
-      showModeDropdown: false,   // Toggles dropdown visibility
-      selectedMode: "",          // Holds the selected mode (Real/Demo)
+      referralLink: "",
+      showModeDropdown: false,
+      selectedMode: "",
     };
   },
   computed: {
@@ -68,6 +68,12 @@ export default {
     selectMode(mode) {
       this.selectedMode = mode;
       this.showModeDropdown = false;
+
+      if (mode === "Real") {
+        this.fetchBalance();
+      } else if (mode === "Demo") {
+        this.fetchDemoBalance();
+      }
     },
 
     async fetchBalance() {
@@ -85,6 +91,24 @@ export default {
         this.$store.commit("updateBalance", updatedBalance);
       } catch (error) {
         console.error("Failed to fetch balance:", error);
+      }
+    },
+
+    async fetchDemoBalance() {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/users/${this.userId}/demobalance`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.getters.token}`,
+            },
+          }
+        );
+
+        const updatedDemoBalance = response.data.demoBalance;
+        this.$store.commit("updateBalance", updatedDemoBalance);
+      } catch (error) {
+        console.error("Failed to fetch demo balance:", error);
       }
     },
 
@@ -125,13 +149,14 @@ export default {
 
     copyReferral() {
       if (this.referralLink) {
-        navigator.clipboard.writeText(this.referralLink)
+        navigator.clipboard
+          .writeText(this.referralLink)
           .then(() => {
             const toast = useToast();
-            toast.success('Referral code copied!');
+            toast.success("Referral code copied!");
           })
-          .catch(err => {
-            console.error('Failed to copy:', err);
+          .catch((err) => {
+            console.error("Failed to copy:", err);
           });
       }
     },
@@ -141,6 +166,7 @@ export default {
   },
 };
 </script>
+
 
 
 
