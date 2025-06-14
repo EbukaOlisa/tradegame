@@ -67,6 +67,7 @@ export default {
 
     selectMode(mode) {
       this.selectedMode = mode;
+      localStorage.setItem("selectedMode", mode); // 👈 Save mode
       this.showModeDropdown = false;
 
       if (mode === "Real") {
@@ -161,9 +162,16 @@ export default {
       }
     },
   },
-  created() {
+   created() {
+  const savedMode = localStorage.getItem("selectedMode");
+  if (savedMode === "Demo") {
+    this.selectedMode = "Demo";
+    this.fetchDemoBalance();
+  } else {
+    this.selectedMode = "Real";
     this.fetchBalance();
-  },
+  }
+}
 };
 </script>
 
