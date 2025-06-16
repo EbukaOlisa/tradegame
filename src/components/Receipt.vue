@@ -9,11 +9,14 @@
 
     <!-- Investment list -->
     <div v-else class="investment-list">
-      <div v-for="investment in investments" :key="investment._id" class="investment-item">
-        <!-- Native Vue dropdown using <details> -->
+      <div v-for="investment in investments" :key="investment._id || investment.id" class="investment-item">
         <details class="investment-dropdown">
           <summary class="investment-header">
-            <strong>{{ investment.groupCode }}</strong> (Investment Code)
+            <strong>
+              {{ investment.groupCode }}
+              <span v-if="investment.isDemo" class="demo-label"> (Demo)</span>
+            </strong>
+            (Investment Code)
           </summary>
 
           <div class="investment-details">
@@ -38,21 +41,33 @@ export default {
       investments: [],
     };
   },
-
   computed: {
     ...mapGetters(["userId"]),
   },
-
   methods: {
     async fetchInvestments() {
       if (!this.userId) return;
       try {
-       const response = await axios.get(
-  `${import.meta.env.VITE_APP_BASE_URL}/api/investments/receipt?userId=${this.userId}`
-);
+        const realRes = await axios.get(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/receipt?userId=${this.userId}`
+        );
+        const demoRes = await axios.get(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/demoreceipt?userId=${this.userId}`
+        );
 
-        console.log("Fetched Investments:", response.data);
-        this.investments = response.data || [];
+        const realInvestments = (realRes.data || []).map(item => ({
+          ...item,
+          isDemo: false,
+        }));
+
+        const demoInvestments = (demoRes.data || []).map(item => ({
+          ...item,
+          isDemo: true,
+        }));
+
+        this.investments = [...realInvestments, ...demoInvestments].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
       } catch (error) {
         console.error("Error fetching investments:", error);
       }
@@ -62,7 +77,6 @@ export default {
       return new Date(date).toLocaleString();
     },
   },
-
   mounted() {
     if (this.userId) {
       this.fetchInvestments();
@@ -72,57 +86,48 @@ export default {
 </script>
 
 <style scoped>
-/* Container styling */
 .receipt-container {
- 
   font-family: Arial, sans-serif;
   text-align: center;
   margin: 20px auto;
-  
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: lightyellow;
 }
 
-/* Title */
 .title {
   text-align: center;
   font-size: 2rem;
   color: #003366;
   margin-bottom: 20px;
-  background-color:lightyellow;
+  background-color: lightyellow;
 }
 
-/* No investments message */
 .no-investments {
   text-align: center;
   color: #888;
   font-size: 1.2rem;
 }
 
-/* Investment List */
 .investment-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Investment Item */
 .investment-item {
-  background-color:lightyellow;
+  background-color: lightyellow;
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Dropdown */
 .investment-dropdown {
   width: 100%;
   cursor: pointer;
 }
 
-/* Dropdown Header */
 .investment-header {
   font-size: 1.2rem;
   font-weight: bold;
@@ -133,7 +138,6 @@ export default {
   text-align: center;
 }
 
-/* Dropdown Details */
 .investment-details {
   padding: 10px;
   margin-top: 5px;
@@ -142,9 +146,14 @@ export default {
   border: 1px solid #ddd;
 }
 
-/* Labels */
 .label {
   font-weight: bold;
   color: #003366;
+}
+
+.demo-label {
+  color: red;
+  font-weight: bold;
+  font-size: 0.95rem;
 }
 </style>
