@@ -11,7 +11,11 @@
           :key="investment._id"
           class="investment-item"
         >
-          <span class="category">{{ investment.category }}</span>
+          <span class="category">
+          {{ investment.category }}
+          <span v-if="investment.isDemo" class="demo-label"> (Demo)</span>
+          </span>
+
           <span class="outcome">{{ investment.outcome || 'Pending' }}</span>
           <span class="status">{{ investment.status }}</span>
           <details>
@@ -27,7 +31,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 import axios from "axios";
@@ -36,9 +39,10 @@ export default {
   name: "InvestmentDetails",
   data() {
     return {
-      investments: [], // All fetched investments
-      displayedInvestments: [], // Investments displayed on the page
-      itemsPerPage: 70, // Number of investments displayed per batch
+      realInvestments: [],
+      demoInvestments: [],
+      displayedInvestments: [],
+      itemsPerPage: 70,
       currentPage: 0,
       hasMore: true,
     };
@@ -48,28 +52,52 @@ export default {
   },
   methods: {
     async fetchInvestments() {
+      if (!this.userId) return;
+
       try {
-        if (!this.userId) return;
+        const response = await axios.get(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/user/${this.userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
 
-       const response = await axios.get(
-   `${import.meta.env.VITE_APP_BASE_URL}/api/investments/user/${this.userId}`,
-  {
-    headers: {
-      Authorization: `Bearer ${this.token}`,
-    },
-  }
-);
-
-
-        // Store and sort investments (already sorted from backend)
-        this.investments = response.data;
-
-        // Initially load the first batch
-        this.updateDisplayedInvestments();
+        this.realInvestments = (response.data || []).map(item => ({
+          ...item,
+          isDemo: false,
+        }));
       } catch (error) {
-        console.error("Error fetching investments:", error);
+        console.error("Error fetching real investments:", error);
       }
+
+      try {
+        const demoRes = await axios.get(
+          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/demouser/${this.userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`,
+            },
+          }
+        );
+
+        this.demoInvestments = (demoRes.data || []).map(item => ({
+          ...item,
+          isDemo: true,
+        }));
+      } catch (error) {
+        console.error("Error fetching demo investments:", error);
+      }
+
+      const all = [...this.realInvestments, ...this.demoInvestments].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      this.investments = all;
+      this.updateDisplayedInvestments();
     },
+
     updateDisplayedInvestments() {
       const start = this.currentPage * this.itemsPerPage;
       const end = start + this.itemsPerPage;
@@ -78,19 +106,22 @@ export default {
       this.displayedInvestments = [...this.displayedInvestments, ...newBatch];
 
       if (end >= this.investments.length) {
-        this.hasMore = false; // No more investments to load
+        this.hasMore = false;
       }
     },
+
     loadMoreInvestments() {
       this.currentPage++;
       this.updateDisplayedInvestments();
     },
   },
+
   created() {
     this.fetchInvestments();
-  }
+  },
 };
 </script>
+
 
 
 <style scoped>
@@ -188,4 +219,10 @@ button {
 button:hover {
   background: #48c6ef;
 }
+.demo-label {
+  color: red;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
 </style>

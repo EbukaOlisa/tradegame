@@ -46,32 +46,29 @@ export default {
   },
   methods: {
     async fetchInvestments() {
-      if (!this.userId) return;
-      try {
-        const realRes = await axios.get(
-          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/receipt?userId=${this.userId}`
-        );
-        const demoRes = await axios.get(
-          `${import.meta.env.VITE_APP_BASE_URL}/api/investments/demoreceipt?userId=${this.userId}`
-        );
+  if (!this.userId) return;
 
-        const realInvestments = (realRes.data || []).map(item => ({
-          ...item,
-          isDemo: false,
-        }));
+  let realInvestments = [];
+  let demoInvestments = [];
 
-        const demoInvestments = (demoRes.data || []).map(item => ({
-          ...item,
-          isDemo: true,
-        }));
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_APP_BASE_URL}/api/investments/receipt?userId=${this.userId}`);
+    realInvestments = (res.data || []).map(item => ({ ...item, isDemo: false }));
+  } catch (err) {
+    console.error("Error fetching real investments:", err);
+  }
 
-        this.investments = [...realInvestments, ...demoInvestments].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-      } catch (error) {
-        console.error("Error fetching investments:", error);
-      }
-    },
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_APP_BASE_URL}/api/investments/demoreceipt?userId=${this.userId}`);
+    demoInvestments = (res.data || []).map(item => ({ ...item, isDemo: true }));
+  } catch (err) {
+    console.error("Error fetching demo investments:", err);
+  }
+
+  this.investments = [...realInvestments, ...demoInvestments].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+},
 
     formatDate(date) {
       return new Date(date).toLocaleString();
