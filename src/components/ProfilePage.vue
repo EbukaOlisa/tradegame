@@ -3,13 +3,23 @@
     <div class="top-bar">
       <!-- Left-aligned change mode section -->
       <div class="left-bar">
-        <button class="get-referral" @click="toggleModeDropdown">Change Mode</button>
-        <span v-if="selectedMode" class="selected-mode">{{ selectedMode }}</span>
-        <ul v-if="showModeDropdown" class="mode-dropdown">
-          <li @click="selectMode('Real')">Real</li>
-          <li @click="selectMode('Demo')">Demo</li>
-        </ul>
-      </div>
+  <button class="get-referral" @click="toggleModeDropdown">Change Mode</button>
+  <span v-if="selectedMode" class="selected-mode">{{ selectedMode }}</span>
+  <ul v-if="showModeDropdown" class="mode-dropdown">
+    <li @click="selectMode('Real')">Real</li>
+    <li @click="selectMode('Demo')">Demo</li>
+  </ul>
+
+  <!-- Refill Balance Button (shown only in Demo mode) -->
+  <button
+    v-if="selectedMode === 'Demo'"
+    class="refill-button"
+    @click="refillDemoBalance"
+  >
+    Refill Balance
+  </button>
+</div>
+
 
       <!-- Right-aligned get referral code -->
       <button class="get-referral" @click="getReferralCode">Get Referral Code</button>
@@ -130,6 +140,30 @@ export default {
     navigateToInvestmentDetails() {
       this.$router.push(`/investment-details/${this.userId}`);
     },
+    async refillDemoBalance() {
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_APP_BASE_URL}/api/users/${this.userId}/reset-demo`,
+      {}, // assuming no payload is needed
+      {
+        headers: {
+          Authorization: `Bearer ${this.$store.getters.token}`,
+        },
+      }
+    );
+
+    const newBalance = response.data.demoBalance;
+    this.$store.commit("updateBalance", newBalance);
+
+    const toast = useToast();
+    toast.success("Demo balance refilled!");
+  } catch (error) {
+    console.error("Refill failed:", error);
+    const toast = useToast();
+    toast.error("Failed to refill demo balance.");
+  }
+},
+
 
     async getReferralCode() {
       try {
@@ -346,6 +380,24 @@ p {
   margin-left: 10px;
   font-weight: bold;
   color: yellow;
+}
+.refill-button {
+  background-color: goldenrod;
+  color: white;
+  font-weight: bold;
+  padding: 4px 8px;         /* smaller padding */
+  margin-top: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;          /* slightly smaller text */
+  width: auto;              /* let width adjust to content */
+  min-width: 100px;         /* optional: set a minimal width */
+  text-align: center;
+}
+
+.refill-button:hover {
+  background-color: darkgoldenrod;
 }
 
 
