@@ -36,7 +36,7 @@
       <router-view />
     </main>
 <div id="app">
-    <Timeframe /> <!-- Display the Timeframe component -->
+   
   </div>
     <footer>
     <nav2 v-if="!isHiddenPage">
@@ -108,12 +108,19 @@ export default {
 
 
 <style>
-
-.header,  {
-  color: yellow; /* Sets the text color to a golden shade */
-  text-align: center; /* Centers the text */
-  font-weight: bold; /* Makes the text bold for emphasis */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #003366;
+  color: yellow;
+  padding: 10px 0;
+  border-bottom: 2px solid rgba(240, 236, 31, 0.81);
 }
+
+
 
 
 /* Global App Styling */
@@ -128,16 +135,6 @@ export default {
   color: #333;
 }
 
-
-
-
-/* Header Styling */
-header {
-  background-color: #003366;
-  color: yellow;
-  padding: 10px 0;
-  border-bottom: 2px solid rgba(240, 236, 31, 0.81); /* Subtle highlight */
-}
 
 header h1 {
   margin: 0;
@@ -160,10 +157,10 @@ nav a:hover {
   text-decoration: underline;
 }
 
-/* Main Content Area */
 main {
   flex-grow: 1;
   padding: 20px;
+  margin-top: 320px; /* Adjust depending on header height */
 }
 
 
