@@ -3,7 +3,7 @@
   <div class="app">
     <header>
     <div class="logo-container">
-    <img src="@/assets/logo.png" alt="QuickStock9ja Logo" class="logo" /><h1 class="quick">Tr8game9ja</h1></div>
+    <img src="@/assets/logo.png" alt="QuickStock9ja Logo" class="logo" /><h1 class="quick">TradeGame</h1></div>
        
       
       
@@ -12,7 +12,7 @@
     
   
         
-         <router-link to="/advice">How2Trade</router-link> 
+         <router-link to="/advice">HowToPlay</router-link> 
          <router-link v-if="isLoggedIn" :to="`/profile/${user?.userId}/`">Profile</router-link>
         <!-- Conditionally render SignUp/Login links based on isLoggedIn -->
         <router-link v-if="!isLoggedIn" to="/signup">Sign Up</router-link> 
@@ -42,7 +42,7 @@
     <nav2 v-if="!isHiddenPage">
      <router-link to="/about/">AboutUs</router-link> | |
            <router-link to="/terms/">Terms&conditions</router-link></nav2>
-      <p>© 2025 QuickStock9ja. All Rights Reserved.</p>
+      <p>© 2025 TradeGame. All Rights Reserved.</p>
     </footer>
   </div>
 </template>

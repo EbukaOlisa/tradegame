@@ -1,14 +1,14 @@
 <template>
   <div class="about-container">
     <v-card class="card">
-      <v-card-title>About QuickStock9ja</v-card-title>
-      <v-card-text>Empowering smart investments with real-time supply and demand analysis.</v-card-text>
+      <v-card-title>About TradeGame</v-card-title>
+      <v-card-text>Empowering smart choices with real-time supply and demand analysis.</v-card-text>
     </v-card>
 
     <section class="overview">
       <v-card class="card">
-        <v-card-title>What is QuickStock9ja?</v-card-title>
-        <v-card-text>QuickStock9ja is an investment platform that allows users to analyze market trends and make informed investment decisions.</v-card-text>
+        <v-card-title>What is TradeGame?</v-card-title>
+        <v-card-text>TradeGame is an investment Education platform that allows users to analyze market trends and make informed trade decisions.</v-card-text>
       </v-card>
     </section>
 
@@ -20,6 +20,7 @@
             <li>📊 Real-time Supply & Demand Trend Analysis</li>
             <li>💰 Flexible Investment Plans (5m, 1h, 1d, etc.)</li>
             <li>⚡ Automated Outcome Calculation</li>
+            <li>🎓 Demo Mode for learning and mastering decisive trade decisions</li>
             <li>💳 Secure Deposit & Withdrawal System</li>
             <li>🖥 User-Friendly Dashboard for Easy Monitoring</li>
           </ul>

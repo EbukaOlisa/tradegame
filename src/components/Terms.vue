@@ -2,7 +2,7 @@
   <div class="terms-container">
     <v-card class="card">
       <v-card-title>Terms & Conditions</v-card-title>
-      <v-card-text>By using QuickStock9ja, you agree to these terms. Please read them carefully before proceeding.</v-card-text>
+      <v-card-text>By using TradeGame, you agree to these terms. Please read them carefully before proceeding.</v-card-text>
     </v-card>
 
     <section class="user-responsibilities">
@@ -21,9 +21,9 @@
 
     <section class="risk-disclaimer">
       <v-card class="card">
-        <v-card-title>Investment Risks</v-card-title>
+        <v-card-title>Choice Risks</v-card-title>
         <v-card-text>
-          QuickStock9ja does not guarantee profits. Investments are subject to supply and demand fluctuations, and users must invest responsibly.
+          TradeGame does not guarantee profits. Trades are subject to supply and demand fluctuations, and users must invest responsibly.
         </v-card-text>
       </v-card>
     </section>

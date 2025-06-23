@@ -30,19 +30,48 @@ export default {
   },
   methods: {
     async handleDeposit() {
-      try {
-        this.error = null;
-        const response = await axios.post(
-    `${import.meta.env.VITE_APP_BASE_URL}/api/transactions/deposit`, // Use import.meta.env for Vite
-    { userId: this.userId, amount: this.amount });
-        window.location.href = response.data.paymentLink; // Redirect to Flutterwave payment
-      } catch (err) {
-        this.error = err.response?.data?.error || 'An error occurred.';
-      }
-    },
-  },
+  try {
+    this.error = null;
+    const response = await axios.post(
+      `${import.meta.env.VITE_APP_BASE_URL}/api/transactions/deposit`,
+      { userId: this.userId, amount: this.amount }
+    );
+
+    const { paymentLink, user } = response.data;
+
+    const txRef = paymentLink.split("tx_ref=")[1]; // Extract tx_ref
+
+    // Inline Flutterwave modal
+    FlutterwaveCheckout({
+      public_key: import.meta.env.VITE_FLW_PUBLIC_KEY,
+      tx_ref: txRef,
+      amount: this.amount,
+      currency: "NGN",
+      customer: {
+        email: user.email,  // ✅ Correctly accessed
+        name: user.name,
+      },
+      callback: function (payment) {
+        alert("Payment completed. You can check your balance shortly.");
+      },
+      onclose: function () {
+        console.log("Payment modal closed");
+      },
+      customizations: {
+        title: "Tr8Game9ja",
+        description: "Deposit into your Tr8Game9ja Wallet",
+        logo: "/logos.png", // ✅ Make sure this is in /public
+      },
+    });
+  } catch (err) {
+    this.error = err.response?.data?.error || "An error occurred.";
+  }
+}
+
+  }
 };
 </script>
+
 
 <style>
 .error {

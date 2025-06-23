@@ -33,7 +33,7 @@
     </div>
     <div class="prompt"> make at least two(2) selections!</div>
      <button class="submit-btn" :disabled="!isAnyChoiceSelected" @click="viewInvestmentSummary">
-     View Investment Summary
+     View Trade Summary
       </button>
      <!-- Popup Modal for Trend Graph -->
 <div v-if="showTrendModal" class="modal" @click.self="closeTrendModal">
